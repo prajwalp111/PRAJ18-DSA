@@ -51,25 +51,42 @@ class CreditCard:
         """Process customer payment that reduces balance."""
         self._balance -= amount
 
+    @classmethod
+    def from_string(cls, card_str):
+        """"
+        Create a new CreditCard instance from a string.
+        The string should contain the customer name, bank name, account number, and limit, separated by commas.
+        """
+        customer, bank, acnt, limit = card_str.split(', ')
+        return cls(customer, bank, acnt, int(limit))
+
+    @staticmethod
+    def is_limit_valid(limit):
+        """Check if the provided limit is a valid positive integer."""
+        return isinstance(limit, int) and limit > 0
+
 if __name__ == "__main__":
 
     wallet = []
     wallet.append(CreditCard("Bishma Raja", "SBI", "1234 5267 8122 2222", 10000))
     wallet.append(CreditCard("Bishma Raja", "HDFC", "1324 2356 5455 2265", 12000))
     wallet.append(CreditCard("Bishma Raja", "ICICI", "1234 5267 8122 2222", 15000))
+    wallet.append(CreditCard.from_string("Bishma Raja, Axis Bank, 1245 5738 9043 1111, 20200"))
 
     for val in range(1, 17):
         wallet[0].charge(val * 100)
         wallet[1].charge(val * 200)
         wallet[2].charge(val * 300)
+        wallet[3].charge(val * 400)
 
 
-    for c in range(3):
+    for c in range(4):
         print(f"Customer = {wallet[c].get_customer()}")
         print(f"Bank = {wallet[c].get_bank()}")
         print(f"Account = {wallet[c].get_account()}")
         print(f"Limit = {wallet[c].get_limit()}")
         print(f"Balance = {wallet[c].get_balance()}")
+        print("Limit Validity Check:", "Valid" if CreditCard.is_limit_valid(wallet[c].get_limit()) else "Invalid")
 
         while wallet[c].get_balance() > 100:
             wallet[c].make_payment(1000)
